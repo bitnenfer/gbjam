@@ -29,8 +29,9 @@ files = os.listdir(code_path)
 s_files = [i for i in files if i.endswith(".s")]
 
 for file in s_files:
-	cmd = isas32 + " " + asm_flags + " " + code_path + file + " -o " + obj_path + file + ".o"
-	os.system(cmd)
+  print("processing " + file)
+  cmd = isas32 + " " + asm_flags + " " + code_path + file + " -o " + obj_path + file + ".o"
+  os.system(cmd)
 
 print "Linking..."
 
@@ -39,10 +40,12 @@ o_files = [i for i in files if i.endswith(".o")]
 obj_files = ""
 
 for file in o_files:
-	obj_files = obj_files + " " + obj_path + file
+  obj_files = obj_files + " " + obj_path + file
 
 
 link_cmd = islk32 + " " + lnk_flags + " " + obj_files + " -o " + out_path + output + ".isx"
+
+print("linking: " + obj_files)
 
 os.system(link_cmd)
 shutil.rmtree(obj_path)

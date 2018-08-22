@@ -1,5 +1,5 @@
 isdmg.s
-.\src\code.s
+.\src\Game.s
 	group : TITLE                           
 	org   : 0x00000040
 	org   : 0x00000048
@@ -11,29 +11,58 @@ isdmg.s
 	org   : 0x00000150
 		STARTDMA                         = 0x0000FF80
 		ENTRYPOINT                       = 0x00000150
-		MAINLOOP                         = 0x000001BA
-		HANDLEINPUT                      = 0x000001CC
-		SCROLLBG                         = 0x000001E9
-		LOADSTARS                        = 0x00000257
-		PLAYERINIT                       = 0x0000027C
-		PLAYERUPDATE                     = 0x000002FE
-		PLAYERINPUT                      = 0x00000308
-		PLAYERSHOOT                      = 0x0000038C
-		PLAYERUPDATEBULLETS              = 0x00000401
-		CHECKBULLETCOLLISION             = 0x00000453
-		PLAYERUPDATESPRITE               = 0x00000454
-include\Assets.s
+		STARTLOAD                        = 0x0000016F
+include\HandleInput.s
+		HANDLEINPUT                      = 0x00000171
+
+.\src\Game.s
+include\GameCode.s
+		GAMECODEINIT                     = 0x0000018E
+		GAMECODELOOP                     = 0x000001FB
+		TESTTEXTLOADING                  = 0x0000020F
+		CHECKBULLETCOLLISION             = 0x0000023F
+		LOADBG                           = 0x00000240
+		SCROLLBG                         = 0x00000259
+
+.\src\Game.s
+include\PrintText.s
+		PRINTTEXT                        = 0x0000029F
+		PRINTTEXTNOTSAFE                 = 0x000002D2
+		ENABLETEXTBUFFER                 = 0x000002F3
+		DISABLETEXTBUFFER                = 0x000002FC
+		INITTEXTBUFFER                   = 0x00000305
+
+.\src\Game.s
+include\Player.s
+		PLAYERINIT                       = 0x00000325
+		PLAYERUPDATE                     = 0x000003B4
+		PLAYERINPUT                      = 0x000003BE
+		PLAYERSHOOT                      = 0x00000444
+		PLAYERUPDATEBULLETS              = 0x000004B9
+		PLAYERUPDATESPRITE               = 0x0000050B
+
+.\src\Game.s
+include\Font.s
+		FONT_TILE_DATA_SIZE              = 0x00000240
+		FONT_TILE_COUNT                  = 0x00000024
+		FONT_TILE_DATA                   = 0x000005A7
+
+.\src\Game.s
+include\SpriteData.s
 		SPRITESHEET_TILE_DATA_SIZE       = 0x000000D1
-		SPRITESHEET_TILE_DATA            = 0x000004F0
+		SPRITESHEET_TILE_DATA            = 0x000007E7
+
+.\src\Game.s
+include\ScreenData.s
 		SCREEN_TILE_MAP_SIZE             = 0x00000240
 		SCREEN_TILE_MAP_WIDTH            = 0x00000020
 		SCREEN_TILE_MAP_HEIGHT           = 0x00000012
-		SCREEN_TILE_DATA_SIZE            = 0x00000510
+		SCREEN_TILE_DATA_SIZE            = 0x000004D0
 		SCREEN_TILE_COUNT                = 0x00000240
-		SCREEN_MAP_DATA                  = 0x000005C0
-		SCREEN_TILE_DATA                 = 0x00000800
+		SCREEN_MAP_DATA                  = 0x000008B7
+		SCREEN_TILE_DATA                 = 0x00000AF7
 
-.\src\code.s
+.\src\Game.s
 include\Registers.s
 		LCD_WIDTH                        = 0x000000A0
 		LCD_HEIGHT                       = 0x00000090
@@ -294,26 +323,37 @@ include\Registers.s
 		NR43                             = 0x0000FF22
 		NR44                             = 0x0000FF23
 
-.\src\code.s
+.\src\Game.s
 include\Utils.s
-		TURNLCDOFF                       = 0x00000D10
-		TURNLCDON                        = 0x00000D17
-		TURNOAMON                        = 0x00000D1E
-		TURNOAMOFF                       = 0x00000D25
-		WAITLYC                          = 0x00000D2C
-		WAITHBLANK                       = 0x00000D35
-		LOADMAPROW                       = 0x00000D3C
-		WAITVBLANK                       = 0x00000D44
-		MEMCPY                           = 0x00000D50
-		MEMSET                           = 0x00000D61
-		SLEEP                            = 0x00000D6F
+		TURNLCDOFF                       = 0x00000FC7
+		TURNLCDON                        = 0x00000FCE
+		TURNOAMON                        = 0x00000FD5
+		TURNOAMOFF                       = 0x00000FDC
+		WAITLYC                          = 0x00000FE3
+		WAITHBLANK                       = 0x00000FEC
+		LOADMAPROW                       = 0x00000FF3
+		WAITVBLANK                       = 0x00000FFB
+		MEMCPY                           = 0x00001007
+		MEMSET                           = 0x00001018
+		VRAM_MEMCPY                      = 0x00001026
+		VRAM_MEMSET                      = 0x0000103F
+		SLEEP                            = 0x00001055
 
-.\src\code.s
+.\src\Game.s
+include\StaticData.s
 	org   : 0x00002000
 		PARTICLEFRAMES                   = 0x00002000
 		PLAYERBULLETPTRS                 = 0x00002008
+		TEXT0                            = 0x00002012
+		TEXT1                            = 0x0000201E
+		TEXT2                            = 0x00002032
+		TEXT3                            = 0x0000203E
+		LOADINGTEXT                      = 0x00002052
+		TEXTLIST                         = 0x0000205A
+
+.\src\Game.s
 include\ShadowOAM.s
-		INITSHADOWOAM                    = 0x00002012
+		INITSHADOWOAM                    = 0x00002062
 	org   : 0x00001F80
 		SHADOWOAMDMA_HEAD                = 0x00001F80
 		SHADOWOAMDMA_TAIL                = 0x00001F8B
@@ -523,7 +563,7 @@ include\ShadowOAM.s
 	org   : 0x0000C200
 		SHADOW_OAM_TAIL                  = 0x0000C200
 
-.\src\code.s
+.\src\Game.s
 include\Variables.s
 	group : WORKRAM                         
 	org   : 0x0000C000
@@ -550,11 +590,13 @@ include\Variables.s
 		SCREENSCROLLSPEED3               = 0x0000C014
 		INPUTBTN                         = 0x0000C015
 		INPUTDIR                         = 0x0000C016
-		TEMP                             = 0x0000C017
+		TEXT                             = 0x0000C017
+		BTN                              = 0x0000C018
+		TEMP                             = 0x0000C019
 
-.\src\code.s
+.\src\Game.s
 
 	End of [TITLE] group = 0000:014F
 	End of [MAIN] group = 0000:1F8A
 	End of [SHADOWOAMRAM] group = 0000:C1FF
-	End of [WORKRAM] group = 0000:C017
+	End of [WORKRAM] group = 0000:C019

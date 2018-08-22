@@ -175,4 +175,4 @@ anim.easeInOutBounce = function (n) {
   return anim.easeOutBounce(n * 2 - 1) * 0.5 + 0.5;
 };
 
-console.log(wave(31, 10, anim.linear, anim.linear).toString());
+console.log(wave(31, 144, anim.linear, anim.linear).toString());

@@ -1,7 +1,7 @@
-	;Variables
+  ;Variables
 WorkRam group $00
 
-	org $C000
+  org $C000
 PlayerX: ds 1
 PlayerY: ds 1
 PlayerParticleFrame: ds 1
@@ -29,5 +29,8 @@ ScreenScrollSpeed3: ds 1
 
 InputBtn: ds 1
 InputDir: ds 1
+
+Text: ds 1
+Btn: ds 1
 
 Temp: ds 1
