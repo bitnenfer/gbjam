@@ -283,9 +283,13 @@ _UpdateBulletMovement:
   ld a,(hl)
   add a,4
   ld (hl),a
-  cp 168
+  cp 176
   jr c,_DontDisableBullet
 _KillBullet:
+  xor a
+  ld (hl),a
+  dec hl
+  ld (hl+),a
   ld a,(PlayerBulletCounter0)
   sub 2
   ld (PlayerBulletCounter0),a
@@ -352,6 +356,10 @@ PlayerUpdateSprite:
   xor a
   ld (SPRITE4_TILE),a
   ld (SPRITE5_TILE),a
+  ld (SPRITE4_X),a
+  ld (SPRITE4_Y),a
+  ld (SPRITE5_X),a
+  ld (SPRITE5_Y),a
   jr _EndPlayerUpdateSprite
 _TestDelay:
   ld a,(PlayerParticleDelay)
@@ -378,6 +386,9 @@ _TestDelay:
 _NoJet:
   ld a,0
   ld (SPRITE5_TILE),a
+  ld (SPRITE5_X),a
+  ld (SPRITE5_Y),a
+  jr _OnlyTopBooster
 _Continue:
   ld a,(PlayerParticleFrame)
   inc a
@@ -395,6 +406,18 @@ _Continue:
   ld a,24
   add a,e
   ld (SPRITE5_Y),a
+  jr _EndPlayerUpdateSprite
+_OnlyTopBooster:
+  ld a,(PlayerParticleFrame)
+  inc a
+  and 7
+  ld (PlayerParticleFrame),a
+  ld a,0
+  add a,d
+  ld (SPRITE4_X),a
+  ld a,16
+  add a,e
+  ld (SPRITE4_Y),a
 _EndPlayerUpdateSprite:
   ret
 ; ===================================

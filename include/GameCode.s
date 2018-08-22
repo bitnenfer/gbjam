@@ -65,7 +65,7 @@ GameCodeInit:
   call PrintText
   xor a
   ld (Text),a
-  
+
 
   ; Always call this at the end
   ; of initialization or you'll
@@ -74,7 +74,7 @@ GameCodeInit:
   ; sprite palette
   ld a,%00110100
   ld (OBJP0),a
-  ld a,%11100100
+  ld a,%11000100
   ld (BGP),a
   
 GameCodeLoop:
@@ -163,3 +163,5 @@ ScrollBG:
   xor a
   ld (SCX),a
   ret
+
+  
