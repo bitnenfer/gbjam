@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Level Editor</title>
+  <style type="text/css">
+    body {
+      font-family: Verdana;
+      font-size: 10px;
+    }
+    #code {
+      width: 600px;
+      height: 600px;
+      overflow: auto;
+      background-color: #fdfdfd;
+      -webkit-box-shadow: -1px 21px 0px -11px rgba(240,240,240,1);
+      -moz-box-shadow: -1px 21px 0px -11px rgba(240,240,240,1);
+      box-shadow: -1px 21px 0px -11px rgba(240,240,240,1);
+      border: 1px solid;
+    }
+    #canvas {
+      margin-top: 10px;
+    }
+    #code::selection {
+      color: #fff;
+      background-color: #777;
+    }
+    #left {
+      height: 100%;
+      float: left;
+      text-align: left;
+    }
+    #right {
+      padding-left: 10px;
+      height: 100%;
+      float: left;
+      text-align: left;
+    }
+    .coord {
+      width: 50px;
+    }
+    .name {
+      width: 100px;
+    }
+    #message {
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+<div id="message"></div>
+<div id="left">
+  <canvas id="canvas" width="160" height="144" tabindex=0 onclick="this.focus()"></canvas>
+  <div>
+  map name: <input class="name" type="text" id="mapName"> x: <input class="coord" type="number" value="0" id="x"> y: <input class="coord" value="0" type="number" id="y">
+  </div>
+  <div>
+  pages:<p>
+  <input type="button" value="save" name="" onclick="saveMapData()"><p>
+  <input type="button" value="load" name="" onclick="loadMapData()"> <select id="load"></select><p>
+  <input type="button" value="clear all" name="" onclick="clearAll()"><p>
+  <input type="button" value="add chunk" name="" onclick="addPage()"> <select id="pages"></select>
+  </div>
+  <div>
+  key t = tile selection<p>
+  key e = select delete tile<p>
+  space = apply paint or erase<p>
+  arrows = control cursor<p>
+  </div>
+</div>
+
+<div id="right">
+  <pre id="code">
+  </pre>
+</div>
+
+<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="editor.js"></script>
+
+</body>
+</html>

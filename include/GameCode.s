@@ -4,9 +4,9 @@ GameCodeInit:
   ld (WY),a
 
   ; Load sprite data
-  ld bc,spritesheet_tile_data
+  ld bc,sprites_tile_data
   ld hl,VRAM_TILE_START
-  ld de,spritesheet_tile_data_size
+  ld de,sprites_tile_data_size
   call VRAM_MemCpy
 
   ; Clear map data
@@ -72,7 +72,7 @@ GameCodeInit:
   ; see artifacts.
   ; Set background and
   ; sprite palette
-  ld a,%00110100
+  ld a,%00101100
   ld (OBJP0),a
   ld a,%11000100
   ld (BGP),a
