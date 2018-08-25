@@ -350,18 +350,6 @@ PlayerUpdateSprite:
   add a,e
   ld (SPRITE3_Y),a
   ; Update Particle animation
-  ld a,(PlayerState)
-  bit 0,a
-  jr nz,_TestDelay
-  xor a
-  ld (SPRITE4_TILE),a
-  ld (SPRITE5_TILE),a
-  ld (SPRITE4_X),a
-  ld (SPRITE4_Y),a
-  ld (SPRITE5_X),a
-  ld (SPRITE5_Y),a
-  jr _EndPlayerUpdateSprite
-_TestDelay:
   ld a,(PlayerParticleDelay)
   dec a
   ld (PlayerParticleDelay),a
@@ -377,19 +365,7 @@ _TestDelay:
   ld a,(hl)
   ld b,a
   ld (SPRITE4_TILE),a
-  ld a,(PlayerState)
-  bit 1,a
-  jr z,_NoJet
-  ld a,b
   ld (SPRITE5_TILE),a
-  jr _Continue
-_NoJet:
-  ld a,0
-  ld (SPRITE5_TILE),a
-  ld (SPRITE5_X),a
-  ld (SPRITE5_Y),a
-  jr _OnlyTopBooster
-_Continue:
   ld a,(PlayerParticleFrame)
   inc a
   and 7
@@ -406,18 +382,6 @@ _Continue:
   ld a,24
   add a,e
   ld (SPRITE5_Y),a
-  jr _EndPlayerUpdateSprite
-_OnlyTopBooster:
-  ld a,(PlayerParticleFrame)
-  inc a
-  and 7
-  ld (PlayerParticleFrame),a
-  ld a,0
-  add a,d
-  ld (SPRITE4_X),a
-  ld a,16
-  add a,e
-  ld (SPRITE4_Y),a
 _EndPlayerUpdateSprite:
   ret
 ; ===================================

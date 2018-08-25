@@ -6,9 +6,9 @@ import os
 os.environ["WINEDEBUG"] = "-all"
 
 bgb = "wine ../bgb/bgb.exe -rom ./build/rom.gb"
-bgbd = "wine ../bgb/bgb.exe -br EntryPoint -rom ./build/rom.gb"
+bgbd = "wine ../bgb/bgb.exe -br EnemyKill -rom ./build/rom.gb"
 
-os.system(bgb);
+os.system(bgbd);
 # os.system(bgb + " -connect 127.0.0.1 & ");
 # os.system(bgb + " -listen 127.0.0.1 & ");
 

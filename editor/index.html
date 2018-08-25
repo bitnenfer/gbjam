@@ -44,10 +44,14 @@
     #message {
       height: 20px;
     }
+    #tileCount {
+      height: 20px;
+    }
   </style>
 </head>
 <body>
 <div id="message"></div>
+<div id="tileCount">Tile Count: 0</div>
 <div id="left">
   <canvas id="canvas" width="160" height="144" tabindex=0 onclick="this.focus()"></canvas>
   <div>
@@ -55,10 +59,12 @@
   </div>
   <div>
   pages:<p>
-  <input type="button" value="save" name="" onclick="saveMapData()"><p>
-  <input type="button" value="load" name="" onclick="loadMapData()"> <select id="load"></select><p>
-  <input type="button" value="clear all" name="" onclick="clearAll()"><p>
-  <input type="button" value="add chunk" name="" onclick="addPage()"> <select id="pages"></select>
+  <input type="button" value="save" name="" onclick="saveMapData();frontBuffer.focus()"><p>
+  <input type="button" value="load" name="" onclick="loadMapData();frontBuffer.focus()"> <select id="load" onchange="frontBuffer.focus()"></select><p>
+  <input type="button" value="add chunk" name="" onclick="addPage();frontBuffer.focus()"> <select id="pages" onclick="frontBuffer.focus()"></select><p>
+  <input type="button" value="clear current chunk" name="" onclick="clearChunk();frontBuffer.focus()"><p>
+  <input type="button" value="clear ALL chunks" name="" onclick="clearAll();frontBuffer.focus()"><p>
+  <input type="button" value="clear storage" name="" onclick="clearStorage()"><p>
   </div>
   <div>
   key t = tile selection<p>

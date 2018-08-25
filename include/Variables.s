@@ -9,8 +9,8 @@ PlayerParticleDelay: ds 1
 
 ; bit 0 (0 = Not Moving | 1 = Moving)
 BOOSTER_DELAY equ 2
-BULLET_COUNT equ 5
-SHOOTING_DELAY equ 9
+BULLET_COUNT equ 3
+SHOOTING_DELAY equ 15
 SHOOTING_FLASH_DELAY equ 0
 PlayerState: ds 1 
 PlayerBullets: ds BULLET_COUNT
@@ -33,4 +33,19 @@ InputDir: ds 1
 Text: ds 1
 Btn: ds 1
 
-Temp: ds 1
+Temp: ds 10
+
+ObjectOffset: ds 1
+ObjectPtr: ds 2
+
+FastRandSeed: ds 1
+MAX_ENEMIES equ 5
+Enemies: ds MAX_ENEMIES
+ENEMY_SPAWN_DELAY equ 30
+EnemySpawnCounter: ds 1
+
+BulletY equ Temp+4
+BulletX equ Temp+5
+EnemyY equ Temp+6
+EnemyX equ Temp+7
+EnemyAddress equ Temp+8 ;2bytes

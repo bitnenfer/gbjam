@@ -1,4 +1,26 @@
 ; Utility Functions
+FastRand:
+  ; Result stored on A
+  ld a,(FastRandSeed)
+  rl a
+  rl a
+  rl a
+  rl a
+  rl a ; mul by 127
+  add a,$DC
+  ld (FastRandSeed),a
+  rr a
+  rr a
+  rr a
+  rr a
+  rr a
+  rr a
+  rr a
+  rr a
+  rr a
+  and $7F
+  ret
+
 TurnLCDOff:
   ld a,(LCDC)
   res 7,a

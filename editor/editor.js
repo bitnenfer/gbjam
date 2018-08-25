@@ -15,11 +15,24 @@ const tilemapBufferCtx = tilemapBuffer.getContext('2d');
 const toHex = (n) => `$${("00" + n.toString(16).toUpperCase()).substr(-2)}`;
 const toHex16 = (n) => `$${("0000" + n.toString(16).toUpperCase()).substr(-4)}`;
 let pages = { name: mapNameInput.value, data: [] };
+let tileCount = 0;
 const palette = [0b11,0b10,0b01,0b00];
 const tilesetData = {
   asm: '',
   size: ''
 };
+
+function clearChunk () {
+  if (confirm('Are you sure you want to clear the current chunk?')) {
+    tiles.data.length = 0;
+    tiles.x = 0;
+    tiles.y = 0;
+    tiles.width = 0;
+    tiles.height = 0;
+    bakeData();
+    reDrawTilemapBuffer();
+  }
+}
 
 function populateLoadList () {
   const keys = Object.keys(localStorage);
@@ -42,6 +55,7 @@ function loadMapData () {
       return;
     }
     const name = loadElement.options[loadElement.selectedIndex].value;
+    if (!confirm(`Are you sure you want to load the save '${name}'?`)) return;
     const data = localStorage.getItem(name);
     const obj = JSON.parse(data);
     pages = obj;
@@ -61,8 +75,9 @@ function loadMapData () {
 
 function saveMapData () {
   const saveName = prompt("Save Name", document.getElementById("mapName").value);
-  if (saveName.length === 0) {
-    alert(`Name can't be empty`);
+  if (!saveName || saveName.length === 0) {
+    if (typeof saveName === 'string')
+      alert(`Name can't be empty`);
     return;
   }
   for (let i = 0; i < pages.data.length; ++i) {
@@ -181,15 +196,17 @@ ${mapNameInput.value}_tile_data: ${tilesetData.asm}
   }
 }
 
-function clearAll () {
-  pages.data.splice(0);
-  currentPage = 0;
-  document.getElementById('pages').innerHTML = '';
-  addPage();
-  tiles = pages.data[0];
-  currentTile = 0;
-  bakeData();
-  reDrawTilemapBuffer();
+function clearAll (dontAsk) {
+  if (dontAsk || confirm('Are you sure you want to clear all chunks?')) {
+    pages.data.splice(0);
+    currentPage = 0;
+    document.getElementById('pages').innerHTML = '';
+    addPage();
+    tiles = pages.data[0];
+    currentTile = 0;
+    bakeData();
+    reDrawTilemapBuffer();
+  }
 }
 
 function copyToClipboard(text) {
@@ -297,6 +314,15 @@ function drawBackEditor (ctx) {
   }
 }
 
+function clearStorage () {
+  if (confirm('Are you sure you want to clear storage?')) {
+    localStorage.clear();
+    clearAll(true);
+    reset();
+    frontBuffer.focus()
+  }
+}
+
 function reDrawTilemapBuffer () {
   tilemapBufferCtx.clearRect(0, 0, tilemapBuffer.width, tilemapBuffer.height);
   for (let y = 0; y < tiles.height; ++y) {
@@ -328,6 +354,19 @@ function placeTile (tile, x, y) {
   tilemapBuffer.height = tiles.height * TILE_SIZE;
   reDrawTilemapBuffer();
   bakeData();
+  tileCount = 0;
+  for (let i = 0; i < tiles.height; ++i) {
+    for (let j = 0; j < tiles.width; ++j) {
+      if (tiles.data[i] && tiles.data[i][j] > 0) {
+        tileCount += 1;
+      }
+    }
+  }
+  document.getElementById('message').innerHTML = '';
+  document.getElementById('tileCount').innerHTML = `Tile Count: ${tileCount.toString()}`;
+  if (tileCount > 29) {
+    document.getElementById('message').innerHTML = `Tile count exceeded by ${tileCount - 29}`;
+  }
 }
 
 function handleInput () {
@@ -338,6 +377,11 @@ function handleInput () {
   }
 
   if (isKeyDown('KeyT')) {
+    if (mouse.moving) {
+      cursor.x = Math.floor((mouse.x / TILE_SIZE)) * TILE_SIZE;
+      cursor.y = Math.floor((mouse.y / TILE_SIZE)) * TILE_SIZE;
+    }
+
     cursor.state = 1;
     if (isKeyHit('ArrowLeft')) {
       cursor.x -= TILE_SIZE;
@@ -353,6 +397,8 @@ function handleInput () {
     else if (cursor.x > tileset.width - TILE_SIZE) cursor.x = tileset.width - TILE_SIZE;
     if (cursor.y < 0) cursor.y = 0;
     else if (cursor.y > tileset.height - TILE_SIZE) cursor.y = tileset.height - TILE_SIZE;
+
+
   } else if (isKeyUp('KeyT')) {
     currentTile = (cursor.x/TILE_SIZE)|0 + tileCountX * (cursor.y/TILE_SIZE)|0;
     lastTile = currentTile;
@@ -388,6 +434,14 @@ function handleInput () {
     if (isKeyHit('Enter')) {
       bakeData();
     }
+
+    if (mouse.moving) {
+      editCursor.x = Math.floor((mouse.x / TILE_SIZE)) * TILE_SIZE;
+      editCursor.y = Math.floor((mouse.y / TILE_SIZE)) * TILE_SIZE;
+    }
+    if (isMouseDown(0)) {
+      placeTile(currentTile, (editCursor.x / TILE_SIZE)|0, (editCursor.y / TILE_SIZE)|0);
+    }
   }
 }
 
@@ -405,12 +459,32 @@ function mainLoop () {
   drawFrontEditor(frontBufferCtx);
 }
 
-function start () {
+function reset () {
+  const tileData = readPixels(tileset);
   tileCountX = (tileset.width / TILE_SIZE)|0;
   tileCountY = (tileset.height / TILE_SIZE)|0;
+  tilesetData.asm = '';
+  tilesetData.size = (tileData.length < 0x100 ? toHex(tileData.length) : toHex16(tileData.length));
+  for (let i = 0, step = 0; i < tileData.length; ++i) {
+    if (step === 16 || i === 0) {
+      tilesetData.asm += '\n  db ';
+      step = 0;
+    }
+    step += 1;
+    tilesetData.asm += toHex(tileData[i]) + (step < 16 ? ',' : '');
+  }
+
   addPage();
+  bakeData();
+  populateLoadList();
+
   tiles = pages.data[0];
-  mainLoop();
+  tileCount = 0;
+}
+
+function start () {
+  reset();
+
   document.getElementById('pages').addEventListener('change', (evt) => {
     const target = evt.target;
     tiles = pages.data[target.selectedIndex];
@@ -448,21 +522,19 @@ function start () {
 
   });
 
-  const tileData = readPixels(tileset);
-  tilesetData.asm = '';
-  tilesetData.size = (tileData.length < 0x100 ? toHex(tileData.length) : toHex16(tileData.length));
-  for (let i = 0, step = 0; i < tileData.length; ++i) {
-    if (step === 16 || i === 0) {
-      tilesetData.asm += '\n  db ';
-      step = 0;
-    }
-    step += 1;
-    tilesetData.asm += toHex(tileData[i]) + (step < 16 ? ',' : '');
-  }
+  // setTimeout(function r () {
+  //   setTimeout(r,0);
+  //   frontBuffer.focus();
+  // }, 0);
 
-  bakeData();
-  populateLoadList();
+  // window.onclick = () => {
+  //   console.log('fooo');
+  // }
+
+  mainLoop();
+
 }
 
+tileset.crossOrigin = "Anonymous";
 tileset.onload = start;
 tileset.src = '../assets/spritesheet.png';

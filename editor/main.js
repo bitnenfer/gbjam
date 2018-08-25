@@ -4,10 +4,11 @@ const backBufferCtx = backBuffer.getContext('2d');
 const frontBuffer = document.getElementById('canvas');
 const frontBufferCtx = frontBuffer.getContext('2d');
 const keyboard = { down: {}, hit: {}, release: {} };
-const mouse = { x: 0, y: 0, down: {}, hit: {}, release: {} };
+const mouse = { x: 0, y: 0, down: {}, hit: {}, release: {}, moving: false };
 const mapNameInput = document.getElementById('mapName');
 const frontBufferScale = 2;
 let currentPage = 0;
+let timeout = null;
 
 mapNameInput.value = 'sprites';
 
@@ -17,6 +18,12 @@ backBuffer.width = 160;
 backBuffer.height = 144;
 backBufferCtx.imageSmoothingEnabled = false;
 frontBufferCtx.imageSmoothingEnabled = false;
+
+function disableMouseMove () {
+  clearTimeout(timeout);
+  timeout = null;
+  mouse.moving = false;
+}
 
 window.onkeydown = function (evt) {
   const code = evt.code;
@@ -37,6 +44,9 @@ window.onkeyup = function (evt) {
 frontBuffer.onmousemove = function (evt) {
   mouse.x = ((evt.clientX - frontBuffer.offsetLeft) / frontBufferScale)|0;
   mouse.y = ((evt.clientY - frontBuffer.offsetTop) / frontBufferScale)|0;
+  mouse.moving = true;
+  if (!timeout)
+    timeout = setTimeout(disableMouseMove, 100);
 };
 
 frontBuffer.onmousedown = function (evt) {

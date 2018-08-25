@@ -56,6 +56,10 @@ EntryPoint:
   call TurnLCDOn
   call EnableTextBuffer
 
+  ; Initialize random seed
+  ld a,(DIV)
+  ld (FastRandSeed),a
+
   ; Set window x position
   ld a,$07
   ld (WX),a
@@ -75,12 +79,15 @@ StartLoad:
 
   ; Code and Data
   lib HandleInput
+  lib Menu
   lib GameCode
   lib PrintText
+  lib Enemies
   lib Player
   lib Font
   lib SpriteData
   lib ScreenData
+  lib MainData
   lib Registers
   lib Utils
 
