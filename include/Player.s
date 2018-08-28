@@ -1,6 +1,7 @@
 ; ===================================
 ; Player Initialization
 ; ===================================
+
 PlayerInit:
   ; Body
   ld a,$01
@@ -239,7 +240,7 @@ _SearchBullet0:
 _SearchBullet:
   inc hl
   ld a,l
-  cp (PlayerBullets+5)'lo
+  cp (PlayerBullets+BULLET_COUNT)'lo
   jr z,_Search
   ld a,(hl)
   cp $00

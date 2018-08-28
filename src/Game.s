@@ -51,9 +51,7 @@ StartDMA equ $FF80
 
 EntryPoint:
   ; Initial asset loading
-  call TurnLCDOff
   call InitTextBuffer
-  call TurnLCDOn
   call EnableTextBuffer
 
   ; Initialize random seed
@@ -68,16 +66,23 @@ EntryPoint:
   ld hl,LoadingText
   call PrintText
 
+  ; Initialize Input
+  ld a,$FF
+  ld (InputDir),a
+  ld (InputBtn),a
+  
   ; Initial Game Code
   ld hl,GameCodeInit
   call StartLoad
   stop
+
 
 StartLoad:
   jp (hl)
   ret
 
   ; Code and Data
+  lib Utils
   lib HandleInput
   lib Menu
   lib GameCode
@@ -89,7 +94,6 @@ StartLoad:
   lib ScreenData
   lib MainData
   lib Registers
-  lib Utils
 
   ; This have their own address
   lib StaticData

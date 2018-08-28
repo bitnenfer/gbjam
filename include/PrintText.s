@@ -90,10 +90,15 @@ InitTextBuffer:
   ld bc,font_tile_data
   ld hl,$8800
   ld de,font_tile_data_size
-  call MemCpy
+  call VRAM_MemCpy
   ; Clear text buffer
   ld hl,$9C00
 _ClearTextBuffer:
+_WaitVBlank:
+  ld a,(LCDS)
+  and $03
+  cp $01
+  jr nz,_WaitVBlank
   ld a,$69
   ld (hl+),a
   ld a,l

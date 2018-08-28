@@ -1,4 +1,10 @@
 ; Utility Functions
+AbsSub:
+  sub d
+  ret nc
+  sub $fe
+  ret
+  
 FastRand:
   ; Result stored on A
   ld a,(FastRandSeed)

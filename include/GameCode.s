@@ -209,13 +209,13 @@ _RepEnemies:
   ld a,(BulletX)
   ld d,a
   ld a,(EnemyX)
-  sub d
+  call AbsSub
   cp $08
   jr nc,_NoHit
   ld a,(BulletY)
   ld d,a
   ld a,(EnemyY)
-  sub d
+  call AbsSub
   cp $08
   jr nc,_NoHit
   ; We got collision
@@ -227,7 +227,6 @@ _RepEnemies:
   ld a,(EnemyAddress+1)
   ld l,a
   call EnemyKill
-
 _NoHit:
   ; restore hl and de
   ld a,(Temp+3)
@@ -255,7 +254,6 @@ LoadBG:
   ld de,screen_tile_data_size
   call VRAM_MemCpy
   ret
-
 
 ScrollBG:
   call PlayerUpdate
@@ -285,7 +283,7 @@ ScrollBG:
   call WaitLYC
   ld a,(ScreenScroll0)
   ld (SCX),a
-  ; call CheckBulletEnemyCollision ; Collisions are not working :(
+  ;call CheckBulletEnemyCollision
   ld a,144
   call WaitLYC
   xor a
